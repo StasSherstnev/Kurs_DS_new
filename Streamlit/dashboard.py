@@ -30,6 +30,12 @@ r_d = d.mean()
 data_train['num_room'] = data_train['num_room'].replace(0, np.nan)
 data_train['num_room'] = round(data_train['num_room'].fillna(data_train['full_sq'] * r_d)).astype(int)
 data_train = data_train[data_train['num_room']<9]
+data_train.dropna(subset=['floor'],inplace=True)
+data_train['max_floor'] = data_train['max_floor'].fillna(0)
+data_train.loc[data_train['floor']>data_train['max_floor'], 'max_floor'] = data_train['floor']
+data_train = data_train[data_train['floor']<data_train['max_floor']]
+data_train.dropna(subset=['floor'])
+data_train['max_floor'] = data_train['max_floor'].astype(int)
 data_train['1_sq'] = data_train['price_doc']/data_train['full_sq']
 data_train = data_train[data_train['full_sq']<250]
 data_train = data_train[data_train['1_sq']<500000]
@@ -142,8 +148,7 @@ data_train = data_train.drop(['timestamp',
 # подготовка к обучению
 # загрузка правильных ответов
 data_y = pd.DataFrame()
-data_y['price_doc'] = data_train['price_doc']/1000
-data_y.describe()
+data_y['price_doc'] = data_train['price_doc']
 # формирование тренировочных данных
 data_X = data_train
 # подсчет сколько пропущенных значений в столбцах
@@ -196,8 +201,10 @@ st.sidebar.slider('Площадь кухни',
 st.sidebar.selectbox('Этаж', data_X['floor'].drop_duplicates().sort_values())
 
 
+st.write('RMSLE: ', mean_squared_log_error(y_test,predicted, squared=False))
+st.write('r2', r2_score(y_test, predicted))
+st.write('MSE', mean_squared_error(y_test,predicted))
 
 button = st.button('предсказать')
 if button:
-    st.write(data_X['price_doc'].mean())
-
+    st.write(data_y['price_doc'].mean())
