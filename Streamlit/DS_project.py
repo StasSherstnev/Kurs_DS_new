@@ -75,6 +75,3 @@ def load_data():
 if __name__ == "__main__":
     main()
 
- #   button = st.button('предсказать')
-#if button:
-#    st.write(data_y['price_doc'].mean())

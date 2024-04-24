@@ -191,19 +191,28 @@ predicted = clf.predict(X_test)
 st.write(data_X[:5])
 
 st.sidebar.subheader('Параметры для предсказания')
-st.sidebar.selectbox('Количество комнат', data_X['num_room'].drop_duplicates().sort_values())
-st.sidebar.slider('Общая площадь',
+num_room = st.sidebar.selectbox('Количество комнат', data_X['num_room'].drop_duplicates().sort_values())
+full_sq = st.sidebar.slider('Общая площадь',
                   min_value=min(data_X['full_sq']),
                   max_value=max(data_X['full_sq']))
-st.sidebar.slider('Площадь кухни',
+kitch_sq = st.sidebar.slider('Площадь кухни',
                   min_value=min(data_X['kitch_sq']),
                   max_value=max(data_X['kitch_sq']))
-st.sidebar.selectbox('Этаж', data_X['floor'].drop_duplicates().sort_values())
+floor = st.sidebar.selectbox('Этаж', data_X['floor'].drop_duplicates().sort_values())
 
 
 st.write('RMSLE: ', mean_squared_log_error(y_test,predicted, squared=False))
 st.write('r2', r2_score(y_test, predicted))
 st.write('MSE', mean_squared_error(y_test,predicted))
 
+dict_data = {
+     'num_room' : num_room,
+     'full_sq' : full_sq,
+     'kitch_sq' : kitch_sq,
+     'floor' : floor
+}
+data_predict = pd.DataFrame([dict_data])
 
-
+button = st.button('предсказать')
+if button:
+    clf.predict(data_predict)
