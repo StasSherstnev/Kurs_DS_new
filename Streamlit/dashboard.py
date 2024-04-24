@@ -24,7 +24,7 @@ data_train['num_room'] = data_train['num_room'].astype(int)
 data_train = data_train[(data_train['num_room']!=10) & (data_train['num_room']!=17) & (data_train['num_room']!=19)]
 data_train = data_train[data_train['full_sq']!=0]
 # посчитаем средний процент комнат, чтобы в дальнейшем заполнить пропущенные значения в комнатах
-data_train_d = data_train[data_train['num_room']>0]#/data_train['full_sq'][data_train['num_room']>0]
+data_train_d = data_train[data_train['num_room']>0]
 d = data_train_d['num_room']/data_train_d['full_sq']
 r_d = d.mean()
 data_train['num_room'] = data_train['num_room'].replace(0, np.nan)
@@ -34,7 +34,6 @@ data_train.dropna(subset=['floor'],inplace=True)
 data_train['max_floor'] = data_train['max_floor'].fillna(0)
 data_train.loc[data_train['floor']>data_train['max_floor'], 'max_floor'] = data_train['floor']
 data_train = data_train[data_train['floor']<data_train['max_floor']]
-data_train.dropna(subset=['floor'])
 data_train['max_floor'] = data_train['max_floor'].astype(int)
 data_train['1_sq'] = data_train['price_doc']/data_train['full_sq']
 data_train = data_train[data_train['full_sq']<250]
@@ -205,6 +204,4 @@ st.write('RMSLE: ', mean_squared_log_error(y_test,predicted, squared=False))
 st.write('r2', r2_score(y_test, predicted))
 st.write('MSE', mean_squared_error(y_test,predicted))
 
-button = st.button('предсказать')
-if button:
-    st.write(data_y['price_doc'].mean())
+
